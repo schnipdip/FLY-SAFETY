@@ -17,3 +17,6 @@ Mostly for major airports that report the following METAR Data:
 - pip install emoji
 - pip install flask
 - pip install bs4
+
+# Example:
+Text Message: `kphl`
