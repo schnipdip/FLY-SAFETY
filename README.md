@@ -19,4 +19,5 @@ Mostly for major airports that report the following METAR Data:
 - pip install bs4
 
 # Example:
+Input ICAO Airport Code
 Text Message: `kphl`
