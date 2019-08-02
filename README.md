@@ -5,6 +5,7 @@ Requirements:
 - ngrok.exe
 - Twilio:
   - pip install twilio
+  - Twilio phone number
 - pip install emoji
 - pip install flask
 - pip install bs4
