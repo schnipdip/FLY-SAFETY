@@ -20,4 +20,5 @@ Mostly for major airports that report the following METAR Data:
 
 # Example:
 Input ICAO Airport Code
+
 Text Message: `kphl`
