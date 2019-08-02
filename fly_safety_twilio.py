@@ -143,6 +143,7 @@ def twilio_receive():
     soup = data_gather(usr_input)
     rawText, dewPointC, windDir, windSpeedKt, visMi, pressureMb, tempC, elevation = data_parse(soup)
     fly_answer = data_score(rawText, dewPointC, windDir, windSpeedKt, visMi, pressureMb, tempC, elevation)
+   
     # Add a message - can send variables of strings.
     resp.message(fly_answer)
 
