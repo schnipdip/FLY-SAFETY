@@ -23,3 +23,11 @@ Mostly for major airports that report the following METAR Data:
 Input ICAO Airport Code
 
 Text Message: `kphl`
+
+Input METAR + ICAO Airport Code
+
+Text Message: `Metar kphl`
+
+# Updates:
+8/05/2019: Added METAR return
+8/05/2019: Added better error handling
