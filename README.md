@@ -10,8 +10,8 @@ Mostly for major airports that report the following METAR Data:
 - <visibility_statute_mi>
 - <sea_level_pressure_mb>
 # Requirements: 
-- localtunnel.exe
-  `lt-win.exe --p 5000`
+- localtunnel.exe 
+  `lt-win.exe --p 5000` (exposes the application to the Internet)
 - Twilio:
   - pip install twilio
   - Twilio phone number
