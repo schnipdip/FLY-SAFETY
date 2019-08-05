@@ -9,6 +9,10 @@ import os
 # DO NOT USE FOR FLIGHT
 # FOR SIMULATOR AND EDUCATIONAL PURPOSES ONLY
 
+# 8/5/2019, Update: add conditional receive inputs. if METAR is received, return
+    # METAR data for the specified airport:
+        # kphl metar
+
 app = Flask(__name__)
 
 def data_gather(usr_input):
@@ -125,7 +129,32 @@ def data_score(rawText, dewPointC, windDir, windSpeedKt, visMi, pressureMb, temp
         fly_answer = (emoji.emojize(':red_heart:'))
         return fly_answer
 
-        
+def metar_create(rawText, dewPointC, windDir, windSpeedKt, visMi, pressureMb, tempC, elevation):
+    # calculate ISA Temp first
+    isaT = ((2 * float(elevation)) - 15)
+    
+    # calculate Density Altitude - converted to feet
+    DA = int(round((3.28084 *((float(pressureMb) + (120*(float(tempC)-isaT)))))))
+
+    # calulate Relative Humidity
+    # DewPointC/TempC
+    RH = round(100 * (float(dewPointC)/float(tempC)))
+
+    # calculate Temp F
+    tempF = (float(tempC) * 1.8) + 32
+
+
+    metar_string = (rawText, "\n\n",
+                    "Dew Point(c): ",dewPointC, "\n",
+                    "Relative Humidity: ", RH, "\n",
+                    "Temperature(F): ", tempF, "\n",
+                    "Wind Speed(kt): ", windSpeedKt, "\n",
+                    "Wind Direction: ", windDir, "\n",
+                    "Visibility(mi): ", visMi, "\n",
+                    "Pressure(mb): ", pressureMb, "\n",
+                    "Density Altitude: ", DA, "\n")
+
+    return metar_string
     
 
 @app.route("/sms", methods=['GET', 'POST'])
@@ -136,18 +165,36 @@ def twilio_receive():
     # get the message the user sent
     usr_input = request.values.get('Body',None)
 
-
     # Start our response
     resp = MessagingResponse()
-    
-    soup = data_gather(usr_input)
-    rawText, dewPointC, windDir, windSpeedKt, visMi, pressureMb, tempC, elevation = data_parse(soup)
-    fly_answer = data_score(rawText, dewPointC, windDir, windSpeedKt, visMi, pressureMb, tempC, elevation)
-   
-    # Add a message - can send variables of strings.
-    resp.message(fly_answer)
 
-    return str(resp)
+    usr_input = usr_input.lower()
+    
+    # IF METAR IS RECEIVED
+    if "metar" in usr_input:
+        # parse sring, pull ICAO code
+        icao_code = usr_input.replace("metar", '').strip()     
+        
+        soup = data_gather(icao_code)
+        rawText, dewPointC, windDir, windSpeedKt, visMi, pressureMb, tempC, elevation = data_parse(soup)
+        metar_string = metar_create(rawText, dewPointC, windDir, windSpeedKt, visMi, pressureMb, tempC, elevation)
+        metar_string = ' '. join(map(str, (metar_string)))
+
+        # Add a message - can send variables of strings.
+        #metar_string = str(metar_string)
+        resp.message(metar_string)
+
+        return str(resp)
+    
+    else: 
+        soup = data_gather(usr_input)
+        rawText, dewPointC, windDir, windSpeedKt, visMi, pressureMb, tempC, elevation = data_parse(soup)
+        fly_answer = data_score(rawText, dewPointC, windDir, windSpeedKt, visMi, pressureMb, tempC, elevation)
+
+        # Add a message - can send variables of strings.
+        resp.message(fly_answer)
+
+        return str(resp)
     
 if __name__ == '__main__':
     app.run(debug=True)
