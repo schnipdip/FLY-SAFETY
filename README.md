@@ -20,7 +20,7 @@ Mostly for major airports that report the following METAR Data:
 - pip install bs4
 
 # Example:
-### Input ICAO Airport Code
+#### Input ICAO Airport Code
 
 Text Message: `kphl`
 
@@ -28,9 +28,13 @@ Text Message: `kphl`
 
 Text Message: `Metar kphl`
 
-Get Help
+#### Get Help
 
 Text Message: `help me`
+
+#### Donate
+
+Text Message: `donate`
 
 
 
