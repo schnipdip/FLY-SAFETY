@@ -9,9 +9,7 @@ import os
 # DO NOT USE FOR FLIGHT
 # FOR SIMULATOR AND EDUCATIONAL PURPOSES ONLY
 
-# 8/5/2019, Update: add conditional receive inputs. if METAR is received, return
-    # METAR data for the specified airport:
-        # kphl metar
+# 8/7/2019, Update: Added a donation feature. Also, simplified some code.
 
 app = Flask(__name__)
 
@@ -79,21 +77,12 @@ def data_score(rawText, dewPointC, windDir, windSpeedKt, visMi, pressureMb, temp
         score += 2
 
     # wind speed
-    if int(windSpeedKt) > 6:
+    if int(windSpeedKt) >= 11:
         score += 10
-        wind_warning = "WARNING: Speed is above 6 knots!"
-    elif int(windSpeedKt) == 6:
-        score += 7
-    elif int(windSpeedKt) == 5:
+    elif int(windSpeedKt) < 11 and int(windSpeedKt) >= 7:
         score += 5
-    elif int(windSpeedKt) == 4:
-        score += 4
-    elif int(windSpeedKt) == 3:
-        score += 3
-    elif int(windSpeedKt) == 2:
-        score += 2
-    elif int(windSpeedKt) == 1:
-        score += 1
+    else:
+        score += 1 
 
 
     # Visibility
@@ -178,14 +167,33 @@ def twilio_receive():
         soup = data_gather(icao_code)
         rawText, dewPointC, windDir, windSpeedKt, visMi, pressureMb, tempC, elevation = data_parse(soup)
         metar_string = metar_create(rawText, dewPointC, windDir, windSpeedKt, visMi, pressureMb, tempC, elevation)
-        metar_string = ' '. join(map(str, (metar_string)))
+        metar_string = ' '.join(map(str, (metar_string)))
 
         # Add a message - can send variables of strings.
         #metar_string = str(metar_string)
         resp.message(metar_string)
 
         return str(resp)
-    
+    elif "donate" == usr_input:
+        donate_message = ("Thank you for wanting to donate to Fly Safety (Paypal)\n\n",
+                          "Send a text message to 729725\n\n",
+                          "example: send 10 to 17175038265\n\n",
+                          "Thank you for your donation! It will help keep this app running")
+        donate_message = ' '.join(map(str,(donate_message))) 
+        resp.message(donate_message)
+
+        return str(resp)
+    elif "help me" == usr_input:
+        help_message = ("To get METAR data from an ICAO code:\n",
+                        "  exmaple: metar kjfk\n\n",
+                        "To get flight safety quick check\n",
+                        "  example: kjfk\n\n",
+                        "To donate to Flight Safety\n",
+                        "  example: donate")
+        help_message = ' '.join(map(str,(help_message)))
+        resp.message(help_message)
+
+        return str(resp)
     else: 
         soup = data_gather(usr_input)
         rawText, dewPointC, windDir, windSpeedKt, visMi, pressureMb, tempC, elevation = data_parse(soup)
